@@ -16,8 +16,8 @@
 		A67C9C29286B348F00AB95E1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A67C9C27286B348F00AB95E1 /* LaunchScreen.storyboard */; };
 		A67C9C3A286B3ACE00AB95E1 /* JSONFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67C9C39286B3ACE00AB95E1 /* JSONFields.swift */; };
 		A67C9C3C286B42CB00AB95E1 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67C9C3B286B42CB00AB95E1 /* SettingsViewController.swift */; };
-		A67C9C3E286B451000AB95E1 /* TimerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67C9C3D286B451000AB95E1 /* TimerCell.swift */; };
-		A67C9C42286B51DE00AB95E1 /* MainTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67C9C41286B51DE00AB95E1 /* MainTableViewCell.swift */; };
+		A6F8047D286EFD34009CDB8B /* LocalNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F8047C286EFD34009CDB8B /* LocalNotificationManager.swift */; };
+		A6F8047F286F3591009CDB8B /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F8047E286F3591009CDB8B /* LoginViewController.swift */; };
 		F4EC5A40D951752B18E2B7DC /* Pods_LocationApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D1A3A514D522877EDC5B78AA /* Pods_LocationApp.framework */; };
 /* End PBXBuildFile section */
 
@@ -34,8 +34,8 @@
 		A67C9C2A286B348F00AB95E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A67C9C39286B3ACE00AB95E1 /* JSONFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONFields.swift; sourceTree = "<group>"; };
 		A67C9C3B286B42CB00AB95E1 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
-		A67C9C3D286B451000AB95E1 /* TimerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerCell.swift; sourceTree = "<group>"; };
-		A67C9C41286B51DE00AB95E1 /* MainTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableViewCell.swift; sourceTree = "<group>"; };
+		A6F8047C286EFD34009CDB8B /* LocalNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationManager.swift; sourceTree = "<group>"; };
+		A6F8047E286F3591009CDB8B /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		D1A3A514D522877EDC5B78AA /* Pods_LocationApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LocationApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F05913F8A668316D68150BE5 /* Pods-LocationApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LocationApp.debug.xcconfig"; path = "Target Support Files/Pods-LocationApp/Pods-LocationApp.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -106,6 +106,7 @@
 			children = (
 				A67C9C39286B3ACE00AB95E1 /* JSONFields.swift */,
 				A614917B286DD38300428021 /* ServerManager.swift */,
+				A6F8047C286EFD34009CDB8B /* LocalNotificationManager.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -115,8 +116,6 @@
 			children = (
 				A67C9C22286B348E00AB95E1 /* Main.storyboard */,
 				A67C9C27286B348F00AB95E1 /* LaunchScreen.storyboard */,
-				A67C9C3D286B451000AB95E1 /* TimerCell.swift */,
-				A67C9C41286B51DE00AB95E1 /* MainTableViewCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -126,6 +125,7 @@
 			children = (
 				A67C9C20286B348E00AB95E1 /* MainScreenViewController.swift */,
 				A67C9C3B286B42CB00AB95E1 /* SettingsViewController.swift */,
+				A6F8047E286F3591009CDB8B /* LoginViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -249,10 +249,10 @@
 				A614917C286DD38300428021 /* ServerManager.swift in Sources */,
 				A67C9C1D286B348E00AB95E1 /* AppDelegate.swift in Sources */,
 				A67C9C1F286B348E00AB95E1 /* SceneDelegate.swift in Sources */,
-				A67C9C42286B51DE00AB95E1 /* MainTableViewCell.swift in Sources */,
+				A6F8047F286F3591009CDB8B /* LoginViewController.swift in Sources */,
 				A67C9C3C286B42CB00AB95E1 /* SettingsViewController.swift in Sources */,
+				A6F8047D286EFD34009CDB8B /* LocalNotificationManager.swift in Sources */,
 				A67C9C3A286B3ACE00AB95E1 /* JSONFields.swift in Sources */,
-				A67C9C3E286B451000AB95E1 /* TimerCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

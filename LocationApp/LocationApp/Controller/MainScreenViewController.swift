@@ -6,62 +6,74 @@
 //
 
 import UIKit
-import SwiftyJSON
 import CoreLocation
-import MessageUI
-import CoreMotion
 
 class MainScreenViewController: UIViewController {
     
     // MARK: - ViewController fields
-    @IBOutlet var tableView: UITableView!
+    
     @IBOutlet var startButton: UIButton!
     @IBOutlet var alarmButton: UIButton!
     
-    // Value, which represents current picked by user timer interval
-    private var currentTimer: String!
+    // Value, which represents current picked by user global timer interval
+    private var currentGlobalTimer: String!
     
-    let center = UNUserNotificationCenter.current()
-    let locationManager = CLLocationManager()
-    let serverManager = ServerManager()
+    // Value, which represents current picked by user interval timer interval
+    private var currentIntervalTimer: String!
+    
+    private let localNotificationManager = LocalNotificationManager()
+    private let locationManager = CLLocationManager()
+    private let serverManager = ServerManager()
     
     // Value, which stands for starting timestamp of previous location
     private var startTime: Date?
+    
+    // Value, which refers to current user position
+    private var currentLocation: CLLocation?
+    
+    // Value, which determines the current mode
+    private var isOn: Bool = false
+    
+    private let url = "https://ptsv2.com/t/qcmzf-1656676919/post"
     
     // MARK: - ViewController methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.title = "LocationApp"
+        
+        // Setting up notifications delegate
+        localNotificationManager.center.delegate = self
+        
+        // Rounding and coloring buttons
+        startButton.layer.cornerRadius = 0.5 * startButton.bounds.size.width
+        startButton.backgroundColor = UIColor.systemGreen
+        startButton.tintColor = UIColor.white
+        
+        alarmButton.layer.cornerRadius = 0.5 * alarmButton.bounds.size.width
+        alarmButton.backgroundColor = UIColor.red
+        alarmButton.tintColor = UIColor.white
         
         // Setting up rightBarButton, which show SettingsViewController
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "gearshape"), style: .plain, target: self, action: #selector(openSettingsController))
+        let settingsButton = UIBarButtonItem(image: UIImage(systemName: "gearshape"), style: .plain, target: self, action: #selector(openSettingsController))
+        settingsButton.tintColor = UIColor.white
+        navigationItem.rightBarButtonItem = settingsButton
+        
+        // Setting up <Back button title
+        navigationItem.backButtonTitle = "Back"
+        
+        // Prompting user to allow tracking
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.requestAlwaysAuthorization()
+        
+        // Setting up location manager properties
+        setupLocationManager()
         
         // Request notifications permission
-        center.requestAuthorization(options: [.alert, .sound, .alert]) { granted, error in
+        localNotificationManager.center.requestAuthorization(options: [.alert, .sound, .alert]) { granted, error in
             guard granted else { return }
-            self.center.getNotificationSettings { settings in
+            self.localNotificationManager.center.getNotificationSettings { settings in
                 guard settings.authorizationStatus == .authorized else { return }
-            }
-        }
-    }
-    
-    func sendNotification(withText text: String, andInterval timeInterval: TimeInterval){
-        // Creating content for notification
-        let content = UNMutableNotificationContent()
-        
-        content.title = "First"
-        content.body = "\(text)"
-        content.sound = UNNotificationSound.default
-        
-        // Setting up trigger with specified time interval
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeInterval, repeats: false)
-        
-        // Performing notification request
-        let request = UNNotificationRequest(identifier: "notification", content: content, trigger: trigger)
-        
-        center.add(request) { error in
-            if error != nil{
-                print(error!.localizedDescription)
             }
         }
     }
@@ -70,29 +82,32 @@ class MainScreenViewController: UIViewController {
         if sender == startButton{
             if startButton.titleLabel?.text == "Start"{
                 // Creating json filled with data
-                // TODO: add timer value
+                // FIXME: pass a real timers values
                 let jsonStartButton: JSONData = [
-                    JSONFields.event.rawValue:"alarm_button",
+                    JSONFields.event.rawValue:"start_timer",
                     JSONFields.userId.rawValue:2342,
-                    JSONFields.coords.rawValue:
-                        [
-                            JSONFields.x.rawValue:789,
-                            JSONFields.y.rawValue:789
-                        ]
+                    JSONFields.timerValue.rawValue:1,
+                    JSONFields.intervalValue.rawValue:1
                 ]
                 
                 // TODO: Make data encryption
                 
                 // Sending json to server with specified URL
-                // FIXME: Change url
-                serverManager.sendJSON(withJSON: jsonStartButton, andURL: URL(string: "https://example.com")!)
+                serverManager.sendJSON(withJSON: jsonStartButton, andURL: URL(string: url)!)
                 
-                // Setting up Location manager, initiating location tracking
-                setupLocationManager()
+                // Storing a local notification with timer value
+                //FIXME: change user_id ant timeinterval
+                localNotificationManager.sendScheduledNotification(textBody: "Hey, timer is over. Are you ok?", userInfo: ["USER_ID":1234], timeInterval: 7, doesContainActions: true)
+                
+                // Initiating location tracking
+                isOn = true
+                locationManager.startUpdatingLocation()
                 
                 // Changing text of button to 'Cancel'
                 startButton.setTitle("Cancel", for: .normal)
                 startButton.setTitleColor(UIColor.red, for: .normal)
+                
+                
             } else {
                 // Creating json filled with data
                 // TODO: add timer value
@@ -104,37 +119,46 @@ class MainScreenViewController: UIViewController {
                 // TODO: Make data encryption
                 
                 // Sending json to server with specified URL
-                // FIXME: Change url
-                serverManager.sendJSON(withJSON: jsonStartButton, andURL: URL(string: "https://example.com")!)
+                serverManager.sendJSON(withJSON: jsonStartButton, andURL: URL(string: url)!)
                 
                 // Stop location tracking
+                isOn = false
                 locationManager.stopUpdatingLocation()
                 
                 // Changing text of button to 'Start'
                 startButton.setTitle("Start", for: .normal)
-                startButton.setTitleColor(UIColor.blue, for: .normal)
+                startButton.setTitleColor(UIColor.white, for: .normal)
             }
             
         } else if sender == alarmButton{
-            // Creating json filled with data
-            let jsonAlarmButton: JSONData = [
-                JSONFields.event.rawValue:"alarm_button",
-                JSONFields.userId.rawValue:2342,
-                JSONFields.coords.rawValue:
-                    [
-                        JSONFields.x.rawValue:789,
-                        JSONFields.y.rawValue:789
-                    ]
-            ]
+            // Requesting current coordinates
+            if !isOn {
+                locationManager.startUpdatingLocation()
+            }
             
-            // TODO: Make data encryption
-            
-            // Sending json to server with specified URL
-            // FIXME: Change url
-            serverManager.sendJSON(withJSON: jsonAlarmButton, andURL: URL(string: "https://example.com")!)
-            
-            // Setting up Location manager, initiating location tracking
-            setupLocationManager()
+            // Using DispatchQueue to delay request to server so location manager has some time
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) { [self] in
+                // Creating json filled with data
+                let jsonAlarmButton: JSONData = [
+                    JSONFields.event.rawValue:"alarm_button",
+                    JSONFields.userId.rawValue:2342,
+                    JSONFields.coords.rawValue:
+                        [
+                            JSONFields.x.rawValue:currentLocation?.coordinate.longitude,
+                            JSONFields.y.rawValue:currentLocation?.coordinate.latitude
+                        ]
+                ]
+                
+                // TODO: Make data encryption
+                
+                // Sending json to server with specified URL
+                serverManager.sendJSON(withJSON: jsonAlarmButton, andURL: URL(string: url)!)
+                
+                // Cancel execution of location manager if it wasn't previously launched
+                if !isOn {
+                    locationManager.stopUpdatingLocation()
+                }
+            }
         }
     }
     
@@ -142,60 +166,43 @@ class MainScreenViewController: UIViewController {
         // Doing preparations before moving to SettingsViewController
         let sc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "SettingsViewController") as! SettingsViewController
         
-        // TODO: change doAfterFinish
-        sc.doAfterFinish = { [self] time in
-            currentTimer = time
-            tableView.reloadData()
+        // FIXME: change doAfterFinish
+        sc.doAfterFinish = { [self] global, interval in
+            currentGlobalTimer = global
+            currentIntervalTimer = interval
         }
         navigationController?.pushViewController(sc, animated: true)
     }
     
 }
 
-// MARK: - TableView setup
-extension MainScreenViewController: UITableViewDelegate, UITableViewDataSource{
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        //FIXME: change numberOfRows for another appropriate value
-        return 2
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // Setting up a special cell with specified identifier
-        let cell = tableView.dequeueReusableCell(withIdentifier: "MainTableViewCell", for: indexPath) as! MainTableViewCell
-        cell.timerLabel.text = currentTimer
-        
-        return cell
-    }
-}
+// MARK: - Location setup
 
-// MARK: - LocationManager delegate setup
 extension MainScreenViewController: CLLocationManagerDelegate {
     
-    func setupLocationManager(){
+    private func setupLocationManager(){
         locationManager.delegate = self
         
         // Initializing accuracy of GPS tracking
         locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         
-        // Prompting user to allow tracking
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.requestAlwaysAuthorization()
-        
         // Enable opportunity to fetch data in background non-stop
         locationManager.allowsBackgroundLocationUpdates = true
         locationManager.pausesLocationUpdatesAutomatically = false
-        
-        // Invoke didUpdateLocations method
-        locationManager.startUpdatingLocation()
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        // Checking whether last location is available or not
-        guard let loc = locations.last else { return }
+        var loc: CLLocation!
+        var time: Date!
+        
+        loc = locations.last
+        currentLocation = loc
+        guard isOn == true else {
+            return
+        }
         
         // Making a timestamp of last location
-        let time = loc.timestamp
+        time = loc?.timestamp
         
         // Check for the first time, if current initial time is nil (empty)
         guard startTime != nil else {
@@ -204,7 +211,7 @@ extension MainScreenViewController: CLLocationManagerDelegate {
         }
         
         // Counting a timeInterval of last two locations
-        let elapsed = time.timeIntervalSince(startTime!)
+        let elapsed = (time?.timeIntervalSince(startTime!))!
         
         // If passed time is more than 'seconds', than renew startTime and send data to server
         // FIXME: Make another time limit in didUpdateLocations
@@ -218,18 +225,75 @@ extension MainScreenViewController: CLLocationManagerDelegate {
                 JSONFields.userId.rawValue:2342,
                 JSONFields.coords.rawValue:
                     [
-                        JSONFields.x.rawValue:789,
-                        JSONFields.y.rawValue:789
+                        JSONFields.x.rawValue:loc?.coordinate.longitude,
+                        JSONFields.y.rawValue:loc?.coordinate.latitude
                     ]
             ]
             
             //TODO: Make data encryption
             
             // Sending json to server with current coordinates
-            // FIXME: Change url
-            serverManager.sendJSON(withJSON: jsonCoordinates , andURL: URL(string: "https://example.com/")!)
+            serverManager.sendJSON(withJSON: jsonCoordinates , andURL: URL(string: url)!)
         }
     }
     
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        //TODO: do something if there is no opportunity to request location
+        print(error.localizedDescription)
+    }
 }
 
+// MARK: - Handling notification
+
+extension MainScreenViewController: UNUserNotificationCenterDelegate{
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        
+        // Perform the task associated with the action.
+        switch response.actionIdentifier {
+        case "ALERT_ACTION":
+            // Create json to send
+            let jsonAlarmButton: JSONData = [
+                JSONFields.event.rawValue:"alarm_button",
+                JSONFields.userId.rawValue:2342,
+                JSONFields.coords.rawValue:
+                    [
+                        JSONFields.x.rawValue:currentLocation?.coordinate.longitude,
+                        JSONFields.y.rawValue:currentLocation?.coordinate.latitude
+                    ]
+            ]
+            //TODO: Make data encryption
+            
+            // Sending json to server with current coordinates
+            serverManager.sendJSON(withJSON: jsonAlarmButton , andURL: URL(string: url)!)
+            break
+            
+        case "CANCEL_ACTION":
+            // Create json to send
+            let jsonCoordinates: JSONData = [
+                JSONFields.event.rawValue:"cancel_timer",
+                JSONFields.userId.rawValue:2424,
+            ]
+            
+            //TODO: Make data encryption
+            
+            // Sending json to server with current coordinates
+            serverManager.sendJSON(withJSON: jsonCoordinates , andURL: URL(string: url)!)
+            
+            // Canceling timer and location tracking
+            isOn = false
+            locationManager.stopUpdatingLocation()
+            
+            // Changing text of button to 'Start'
+            startButton.setTitle("Start", for: .normal)
+            startButton.setTitleColor(UIColor.white, for: .normal)
+            break
+            
+        default:
+            break
+        }
+        
+        completionHandler()
+    }
+    
+}
