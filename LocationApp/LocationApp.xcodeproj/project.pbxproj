@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A6038F1B288585260079FCD7 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6038F1A288585260079FCD7 /* TabBarController.swift */; };
+		A6038F1D28858A330079FCD7 /* UserDefaultsKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6038F1C28858A330079FCD7 /* UserDefaultsKeys.swift */; };
+		A6038F1F288590C20079FCD7 /* Timers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6038F1E288590C20079FCD7 /* Timers.swift */; };
 		A614917C286DD38300428021 /* ServerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A614917B286DD38300428021 /* ServerManager.swift */; };
 		A67C9C1D286B348E00AB95E1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67C9C1C286B348E00AB95E1 /* AppDelegate.swift */; };
 		A67C9C1F286B348E00AB95E1 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67C9C1E286B348E00AB95E1 /* SceneDelegate.swift */; };
@@ -23,6 +26,9 @@
 
 /* Begin PBXFileReference section */
 		03E44C46F239B09209114FC4 /* Pods-LocationApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LocationApp.release.xcconfig"; path = "Target Support Files/Pods-LocationApp/Pods-LocationApp.release.xcconfig"; sourceTree = "<group>"; };
+		A6038F1A288585260079FCD7 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
+		A6038F1C28858A330079FCD7 /* UserDefaultsKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeys.swift; sourceTree = "<group>"; };
+		A6038F1E288590C20079FCD7 /* Timers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timers.swift; sourceTree = "<group>"; };
 		A614917B286DD38300428021 /* ServerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerManager.swift; sourceTree = "<group>"; };
 		A67C9C19286B348E00AB95E1 /* LocationApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LocationApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A67C9C1C286B348E00AB95E1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -69,6 +75,15 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		A62FEB802885791400199FC9 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				A614917B286DD38300428021 /* ServerManager.swift */,
+				A6F8047C286EFD34009CDB8B /* LocalNotificationManager.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		A67C9C10286B348E00AB95E1 = {
 			isa = PBXGroup;
 			children = (
@@ -90,9 +105,10 @@
 		A67C9C1B286B348E00AB95E1 /* LocationApp */ = {
 			isa = PBXGroup;
 			children = (
-				A67C9C30286B352700AB95E1 /* Model */,
-				A67C9C31286B352C00AB95E1 /* View */,
-				A67C9C32286B352F00AB95E1 /* Controller */,
+				A62FEB802885791400199FC9 /* Services */,
+				A67C9C30286B352700AB95E1 /* Models */,
+				A67C9C31286B352C00AB95E1 /* Views */,
+				A67C9C32286B352F00AB95E1 /* Controllers */,
 				A67C9C1E286B348E00AB95E1 /* SceneDelegate.swift */,
 				A67C9C1C286B348E00AB95E1 /* AppDelegate.swift */,
 				A67C9C25286B348F00AB95E1 /* Assets.xcassets */,
@@ -101,33 +117,34 @@
 			path = LocationApp;
 			sourceTree = "<group>";
 		};
-		A67C9C30286B352700AB95E1 /* Model */ = {
+		A67C9C30286B352700AB95E1 /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				A67C9C39286B3ACE00AB95E1 /* JSONFields.swift */,
-				A614917B286DD38300428021 /* ServerManager.swift */,
-				A6F8047C286EFD34009CDB8B /* LocalNotificationManager.swift */,
+				A6038F1C28858A330079FCD7 /* UserDefaultsKeys.swift */,
+				A6038F1E288590C20079FCD7 /* Timers.swift */,
 			);
-			path = Model;
+			path = Models;
 			sourceTree = "<group>";
 		};
-		A67C9C31286B352C00AB95E1 /* View */ = {
+		A67C9C31286B352C00AB95E1 /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				A67C9C22286B348E00AB95E1 /* Main.storyboard */,
 				A67C9C27286B348F00AB95E1 /* LaunchScreen.storyboard */,
 			);
-			path = View;
+			path = Views;
 			sourceTree = "<group>";
 		};
-		A67C9C32286B352F00AB95E1 /* Controller */ = {
+		A67C9C32286B352F00AB95E1 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
 				A67C9C20286B348E00AB95E1 /* MainScreenViewController.swift */,
 				A67C9C3B286B42CB00AB95E1 /* SettingsViewController.swift */,
 				A6F8047E286F3591009CDB8B /* LoginViewController.swift */,
+				A6038F1A288585260079FCD7 /* TabBarController.swift */,
 			);
-			path = Controller;
+			path = Controllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -148,6 +165,8 @@
 			dependencies = (
 			);
 			name = LocationApp;
+			packageProductDependencies = (
+			);
 			productName = LocationApp;
 			productReference = A67C9C19286B348E00AB95E1 /* LocationApp.app */;
 			productType = "com.apple.product-type.application";
@@ -176,6 +195,8 @@
 				Base,
 			);
 			mainGroup = A67C9C10286B348E00AB95E1;
+			packageReferences = (
+			);
 			productRefGroup = A67C9C1A286B348E00AB95E1 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -245,9 +266,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A6038F1F288590C20079FCD7 /* Timers.swift in Sources */,
 				A67C9C21286B348E00AB95E1 /* MainScreenViewController.swift in Sources */,
 				A614917C286DD38300428021 /* ServerManager.swift in Sources */,
+				A6038F1D28858A330079FCD7 /* UserDefaultsKeys.swift in Sources */,
 				A67C9C1D286B348E00AB95E1 /* AppDelegate.swift in Sources */,
+				A6038F1B288585260079FCD7 /* TabBarController.swift in Sources */,
 				A67C9C1F286B348E00AB95E1 /* SceneDelegate.swift in Sources */,
 				A6F8047F286F3591009CDB8B /* LoginViewController.swift in Sources */,
 				A67C9C3C286B42CB00AB95E1 /* SettingsViewController.swift in Sources */,

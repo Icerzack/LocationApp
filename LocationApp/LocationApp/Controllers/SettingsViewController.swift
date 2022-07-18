@@ -16,10 +16,10 @@ class SettingsViewController: UITableViewController {
     @IBOutlet var timerIntervalLabel: UILabel!
     @IBOutlet var timerGlobalLabel: UILabel!
     
-    // FIXME: Find another approach to store possible timer values
-    private var possibleGlobalTimers = ["30:00", "45:00", "1:00:00", "1:30:00", "2:00:00"]
-    private var possibleIntervalTimers = ["15:00"]
-    private var currentSelection: String?
+    private var currentPickedTimer: TimerProtocol!
+    
+    private var intervalTimer = IntervalTimer()
+    private var globalTimer = GlobalTimer()
     
     // Value, which stands for picked global timer value
     private var currentGlobalTimerValue: String! {
@@ -35,55 +35,76 @@ class SettingsViewController: UITableViewController {
         }
     }
     
-    // Closure, which will be called when <Back button pressed
-    var doAfterFinish: ((_ globalTimer: String, _ intervalTimer: String) -> Void)?
-    
     // MARK: - SettingsViewController methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        currentGlobalTimerValue = possibleGlobalTimers[0]
-        currentIntervalTimerValue = possibleIntervalTimers[0]
         navigationItem.title = "Settings"
         
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // Retrieve settings if we have some
+        if let globalTimerValue = UserDefaults.standard.string(forKey: UserDefaultsKeys.globalTimer.rawValue){
+            currentGlobalTimerValue = globalTimerValue
+        } else {
+            currentGlobalTimerValue = globalTimer.getPossibleTimers()[0]
+        }
+        
+        if let intervalTimerValue = UserDefaults.standard.string(forKey: UserDefaultsKeys.intervalTimer.rawValue){
+            currentIntervalTimerValue = intervalTimerValue
+        } else {
+            currentIntervalTimerValue = intervalTimer.getPossibleTimers()[0]
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        // Performing closure when tapping <Back button in navigation bar
-        if self.isMovingFromParent{
-            doAfterFinish?(currentGlobalTimerValue, currentIntervalTimerValue)
-        }
+        // Save all data we made in this controller
+        UserDefaults.standard.setValue(currentGlobalTimerValue, forKey: UserDefaultsKeys.globalTimer.rawValue)
+        UserDefaults.standard.setValue(currentIntervalTimerValue, forKey: UserDefaultsKeys.intervalTimer.rawValue)
     }
     
+    // MARK: - Table View selection
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.section {
+        // App settings
         case 0:
-            // Checking, if tapped row is the first one, which stands for global timer setup
             if indexPath.row == 0{
                 // Show PickerView
-                showPickerView(currentSelection: "Global")
+                showPickerView(currentSelection: globalTimer)
                 
                 // Making visual deselection of tapped row
                 tableView.deselectRow(at: indexPath, animated: true)
             } else if indexPath.row == 1{
                 // Show PickerView
-                showPickerView(currentSelection: "Interval")
+                showPickerView(currentSelection: intervalTimer)
                 
                 // Making visual deselection of tapped row
                 tableView.deselectRow(at: indexPath, animated: true)
             }
+        // Telegram settings
         case 1:
-            fallthrough
+            return
+        // User settings
+        case 2:
+            if indexPath.row == 0{
+                let loginVC = UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "LoginViewController")
+                
+                (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootViewController(loginVC)
+            }
         default:
             return
         }
         
     }
     
-    private func showPickerView(currentSelection selection: String){
+    // MARK: - Show Picker
+    private func showPickerView(currentSelection selection: TimerProtocol){
         // Setting current selection
-        currentSelection = selection
+        currentPickedTimer = selection
         
         // Setting up a custom UIPickerView
         picker = UIPickerView.init()
@@ -95,7 +116,7 @@ class SettingsViewController: UITableViewController {
         picker.setValue(UIColor.black, forKey: "textColor")
         picker.autoresizingMask = .flexibleWidth
         picker.contentMode = .center
-        picker.frame = CGRect.init(x: 0.0, y: UIScreen.main.bounds.size.height - 300, width: UIScreen.main.bounds.size.width, height: 300)
+        picker.frame = CGRect.init(x: 0.0, y: UIScreen.main.bounds.size.height - 300, width: UIScreen.main.bounds.size.width, height: 150)
         
         self.view.addSubview(picker)
         
@@ -108,17 +129,18 @@ class SettingsViewController: UITableViewController {
         
     }
     
+    // MARK: - Done button action
     @objc func onDoneButtonTapped() {
         // Remove toolBar and picker from screen
         toolBar.removeFromSuperview()
         picker.removeFromSuperview()
         
         // Refresh text value of chosen property
-        switch currentSelection {
-        case "Global":
-            currentGlobalTimerValue = possibleGlobalTimers[picker.selectedRow(inComponent: 0)]
-        case "Interval":
-            currentIntervalTimerValue = possibleIntervalTimers[picker.selectedRow(inComponent: 0)]
+        switch currentPickedTimer {
+        case is GlobalTimer:
+            currentGlobalTimerValue = currentPickedTimer.getPossibleTimers()[picker.selectedRow(inComponent: 0)]
+        case is IntervalTimer:
+            currentIntervalTimerValue = currentPickedTimer.getPossibleTimers()[picker.selectedRow(inComponent: 0)]
         default:
             break
         }
@@ -133,27 +155,11 @@ extension SettingsViewController: UIPickerViewDelegate, UIPickerViewDataSource{
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        // FIXME: Change numberOfRowsInComponent, so it depends on number of possible timers
-        switch currentSelection{
-        case "Global":
-            return possibleGlobalTimers.count
-        case "Interval":
-            return possibleIntervalTimers.count
-        default:
-            return 0
-        }
+        return currentPickedTimer.getPossibleTimers().count
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        // FIXME: This array will be deleted, so don't forget to change reference
-        switch currentSelection{
-        case "Global":
-            return possibleGlobalTimers[row]
-        case "Interval":
-            return possibleIntervalTimers[row]
-        default:
-            return ""
-        }
+        return currentPickedTimer.getPossibleTimers()[row]
         
     }
     

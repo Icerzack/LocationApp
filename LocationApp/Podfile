@@ -8,5 +8,6 @@ target 'LocationApp' do
   # Pods for LocationApp
 
     pod 'SwiftyJSON'
-
+    pod 'IQKeyboardManager'
+    
 end

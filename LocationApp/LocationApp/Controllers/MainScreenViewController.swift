@@ -40,10 +40,11 @@ class MainScreenViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = "LocationApp"
         
         // Setting up notifications delegate
         localNotificationManager.center.delegate = self
+        
+        navigationItem.title = "Location App"
         
         // Rounding and coloring buttons
         startButton.layer.cornerRadius = 0.5 * startButton.bounds.size.width
@@ -53,11 +54,6 @@ class MainScreenViewController: UIViewController {
         alarmButton.layer.cornerRadius = 0.5 * alarmButton.bounds.size.width
         alarmButton.backgroundColor = UIColor.red
         alarmButton.tintColor = UIColor.white
-        
-        // Setting up rightBarButton, which show SettingsViewController
-        let settingsButton = UIBarButtonItem(image: UIImage(systemName: "gearshape"), style: .plain, target: self, action: #selector(openSettingsController))
-        settingsButton.tintColor = UIColor.white
-        navigationItem.rightBarButtonItem = settingsButton
         
         // Setting up <Back button title
         navigationItem.backButtonTitle = "Back"
@@ -78,6 +74,20 @@ class MainScreenViewController: UIViewController {
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // Retrieve data for timers if we have such
+        if let globalTimerValue = UserDefaults.standard.string(forKey: UserDefaultsKeys.globalTimer.rawValue){
+            currentGlobalTimer = globalTimerValue
+        }
+        
+        if let intervalTimerValue = UserDefaults.standard.string(forKey: UserDefaultsKeys.intervalTimer.rawValue){
+            currentIntervalTimer = intervalTimerValue
+        }
+    }
+    
+    // MARK: - Buttons touch setup
     @IBAction func buttonPressed(_ sender: UIButton) {
         if sender == startButton{
             if startButton.titleLabel?.text == "Start"{
@@ -110,7 +120,6 @@ class MainScreenViewController: UIViewController {
                 
             } else {
                 // Creating json filled with data
-                // TODO: add timer value
                 let jsonStartButton: JSONData = [
                     JSONFields.event.rawValue:"cancel_timer",
                     JSONFields.userId.rawValue:2342,
@@ -161,19 +170,6 @@ class MainScreenViewController: UIViewController {
             }
         }
     }
-    
-    @objc private func openSettingsController(){
-        // Doing preparations before moving to SettingsViewController
-        let sc = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "SettingsViewController") as! SettingsViewController
-        
-        // FIXME: change doAfterFinish
-        sc.doAfterFinish = { [self] global, interval in
-            currentGlobalTimer = global
-            currentIntervalTimer = interval
-        }
-        navigationController?.pushViewController(sc, animated: true)
-    }
-    
 }
 
 // MARK: - Location setup
