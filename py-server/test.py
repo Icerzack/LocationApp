@@ -11,6 +11,8 @@
 # sudo apt-get install libpq-dev python3-dev
 
 from DB import db
+# db.add_timer(2, 543)
+# db.add_timer(1, 1345)
 for r in db.get_timers_by_time('2 days 1 hour 30 minutes 20 seconds'):
     for j in r:
         print(j, end="   ")

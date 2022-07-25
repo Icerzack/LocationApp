@@ -41,7 +41,8 @@ def alarm_button(user_id, coords):
 
 
 def cancel_timer(user_id):
-    return True
+    response = db.del_timer(user_id)
+    return response
 
 
 def interval_timer(user_id, coords):

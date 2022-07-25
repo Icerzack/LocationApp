@@ -84,11 +84,8 @@ class Database:
         try:
             self.cursor.execute(f'''insert into timer (user_id, end_time, type) values 
             ({user_id}, now() + interval '{end_time}', '{alarm_type}'); ''')
-            response = self.cursor.fetchall()
-            help = []
-            for i in range(len(response)):
-                help.append((response[i][0], str(response[i][1]), response[i][2]))
-            response = help
+            self.connection.commit()
+            response = "Timer successfully added"
         except (Exception, psycopg2.Error) as error:
             print("Error while connecting to PostgreSQL", error, flush=True)
             response = f"Error while connecting to PostgreSQL {error}"
@@ -102,7 +99,7 @@ class Database:
             self.cursor.execute(f'''select user_id, end_time-now(), type
                     from timer where 
                     end_time <= now() + interval '{time_activation}'
-                    order by end_time desc;''')
+                    order by end_time;''')
             response = self.cursor.fetchall()
             help = []
             for i in range(len(response)):
@@ -118,11 +115,8 @@ class Database:
         response = None
         try:
             self.cursor.execute(f''' delete from timer where user_id={user_id};''')
-            response = self.cursor.fetchall()
-            help = []
-            for i in range(len(response)):
-                help.append((response[i][0], str(response[i][1]), response[i][2]))
-            response = help
+            self.connection.commit()
+            response = "Timer successfully deleted"
         except (Exception, psycopg2.Error) as error:
             print("Error while connecting to PostgreSQL", error, flush=True)
             response = f"Error while connecting to PostgreSQL {error}"
