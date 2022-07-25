@@ -1,0 +1,5 @@
+DATABASE_TYPE = "postgres"
+USER_NAME = "sosbut_app"
+USER_PASSWORD = "almaxkuz0728"
+HOST = "localhost"
+PORT = "5432"
