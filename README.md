@@ -25,7 +25,11 @@
 
 ## Используемые технологии
 
---- Nothing's here ---
+iOS:
+* UserDefaults
+* JSON, URLSession
+* CoreLocation
+* Notifications
 
 ## Контакты
 
