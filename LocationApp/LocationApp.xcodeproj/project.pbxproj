@@ -105,12 +105,12 @@
 		A67C9C1B286B348E00AB95E1 /* LocationApp */ = {
 			isa = PBXGroup;
 			children = (
+				A67C9C1E286B348E00AB95E1 /* SceneDelegate.swift */,
+				A67C9C1C286B348E00AB95E1 /* AppDelegate.swift */,
 				A62FEB802885791400199FC9 /* Services */,
 				A67C9C30286B352700AB95E1 /* Models */,
 				A67C9C31286B352C00AB95E1 /* Views */,
 				A67C9C32286B352F00AB95E1 /* Controllers */,
-				A67C9C1E286B348E00AB95E1 /* SceneDelegate.swift */,
-				A67C9C1C286B348E00AB95E1 /* AppDelegate.swift */,
 				A67C9C25286B348F00AB95E1 /* Assets.xcassets */,
 				A67C9C2A286B348F00AB95E1 /* Info.plist */,
 			);

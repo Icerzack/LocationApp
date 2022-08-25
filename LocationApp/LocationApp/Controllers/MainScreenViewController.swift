@@ -55,9 +55,6 @@ class MainScreenViewController: UIViewController {
         alarmButton.backgroundColor = UIColor.red
         alarmButton.tintColor = UIColor.white
         
-        // Setting up <Back button title
-        navigationItem.backButtonTitle = "Back"
-        
         // Prompting user to allow tracking
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestAlwaysAuthorization()
