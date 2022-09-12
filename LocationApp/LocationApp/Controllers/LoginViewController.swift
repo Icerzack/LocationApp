@@ -27,7 +27,7 @@ class LoginViewController: UIViewController {
             
             tabBarVC.tabBar.backgroundColor = .white
             
-            let mainVC = UINavigationController(rootViewController: UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "MainScreenViewController") as! MainScreenViewController)
+            let mainVC = UINavigationController(rootViewController: UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "MainScreenViewController") as! MainViewController)
             let settingsVC = UINavigationController(rootViewController: UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "SettingsViewController") as! SettingsViewController)
             
             mainVC.title = "Location App"

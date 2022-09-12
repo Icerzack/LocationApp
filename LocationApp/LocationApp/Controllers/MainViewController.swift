@@ -8,7 +8,7 @@
 import UIKit
 import CoreLocation
 
-class MainScreenViewController: UIViewController {
+class MainViewController: UIViewController {
     
     // MARK: - ViewController fields
     
@@ -75,11 +75,11 @@ class MainScreenViewController: UIViewController {
         super.viewWillAppear(animated)
         
         // Retrieve data for timers if we have such
-        if let globalTimerValue = UserDefaults.standard.string(forKey: UserDefaultsKeys.globalTimer.rawValue){
+        if let globalTimerValue = UserDefaults.standard.string(forKey: UserDefaults.globalTimer){
             currentGlobalTimer = globalTimerValue
         }
         
-        if let intervalTimerValue = UserDefaults.standard.string(forKey: UserDefaultsKeys.intervalTimer.rawValue){
+        if let intervalTimerValue = UserDefaults.standard.string(forKey: UserDefaults.intervalTimer){
             currentIntervalTimer = intervalTimerValue
         }
     }
@@ -171,7 +171,7 @@ class MainScreenViewController: UIViewController {
 
 // MARK: - Location setup
 
-extension MainScreenViewController: CLLocationManagerDelegate {
+extension MainViewController: CLLocationManagerDelegate {
     
     private func setupLocationManager(){
         locationManager.delegate = self
@@ -238,7 +238,7 @@ extension MainScreenViewController: CLLocationManagerDelegate {
 
 // MARK: - Handling notification
 
-extension MainScreenViewController: UNUserNotificationCenterDelegate{
+extension MainViewController: UNUserNotificationCenterDelegate{
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         

@@ -46,13 +46,13 @@ class SettingsViewController: UITableViewController {
         super.viewWillAppear(animated)
         
         // Retrieve settings if we have some
-        if let globalTimerValue = UserDefaults.standard.string(forKey: UserDefaultsKeys.globalTimer.rawValue){
+        if let globalTimerValue = UserDefaults.standard.string(forKey: UserDefaults.globalTimer){
             currentGlobalTimerValue = globalTimerValue
         } else {
             currentGlobalTimerValue = globalTimer.getPossibleTimers()[0]
         }
         
-        if let intervalTimerValue = UserDefaults.standard.string(forKey: UserDefaultsKeys.intervalTimer.rawValue){
+        if let intervalTimerValue = UserDefaults.standard.string(forKey: UserDefaults.intervalTimer){
             currentIntervalTimerValue = intervalTimerValue
         } else {
             currentIntervalTimerValue = intervalTimer.getPossibleTimers()[0]
@@ -63,8 +63,8 @@ class SettingsViewController: UITableViewController {
         super.viewWillDisappear(animated)
         
         // Save all data we made in this controller
-        UserDefaults.standard.setValue(currentGlobalTimerValue, forKey: UserDefaultsKeys.globalTimer.rawValue)
-        UserDefaults.standard.setValue(currentIntervalTimerValue, forKey: UserDefaultsKeys.intervalTimer.rawValue)
+        UserDefaults.standard.setValue(currentGlobalTimerValue, forKey: UserDefaults.globalTimer)
+        UserDefaults.standard.setValue(currentIntervalTimerValue, forKey: UserDefaults.intervalTimer)
     }
     
     // MARK: - Table View selection
